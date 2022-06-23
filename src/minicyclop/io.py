@@ -54,6 +54,8 @@ def read_seeing_data(filename):
     `~pandas.DataFrame`
     """
     dt = ascii.read(filename, delimiter='|', names=['UT', 'MST', 'JD', 'flux', 'seeing', 'r0'])
+    ut = Time(dt['JD'], scale='utc', format='jd')
     df = dt.to_pandas().set_index('UT').drop(columns=['MST', 'JD'])
+    df['isot'] = ut.isot
 
     return df
