@@ -5,3 +5,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
 write_to = "src/minicyclop/version.py"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = [
+    "src/minicyclop/tests"
+]
