@@ -13,7 +13,7 @@ from pathlib import Path
 from minicyclop.io import read_latest
 
 log = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(filename=Path.home() / "tcs_logger.txt", encoding='utf-8', level=logging.INFO)
 
 
 def main():
@@ -64,6 +64,6 @@ def main():
                     log.warning(f"Failed to set redis {redis_key} to {latest_data[k]}: {e}")
 
         else:
-            log.info("Waiting for data...")
+            log.debug("Waiting for data...")
 
         time.sleep(1)
