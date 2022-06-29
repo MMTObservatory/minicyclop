@@ -57,5 +57,7 @@ def read_seeing_data(filename):
     ut = Time(dt['JD'], scale='utc', format='jd')
     df = dt.to_pandas().set_index('UT').drop(columns=['MST', 'JD'])
     df['isot'] = ut.isot
+    df['epoch_ms'] = ut.to_value('unix') * 1000
+    df = df.astype({'epoch_ms': 'int64'})
 
     return df
