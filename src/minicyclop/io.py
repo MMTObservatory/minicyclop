@@ -2,6 +2,8 @@
 I/O routines for handling MiniCyclop data
 """
 
+import pandas as pd
+
 from astropy.io import ascii
 from astropy.time import Time
 
@@ -55,7 +57,8 @@ def read_seeing_data(filename):
     """
     dt = ascii.read(filename, delimiter='|', names=['UT', 'MST', 'JD', 'flux', 'seeing', 'r0'])
     ut = Time(dt['JD'], scale='utc', format='jd')
-    df = dt.to_pandas().set_index('UT').drop(columns=['MST', 'JD'])
+    df = dt.to_pandas().drop(columns=['MST', 'JD'])
+    df = df.set_index(pd.DatetimeIndex(df['UT'], name='ut'))
     df['isot'] = ut.isot
     df['epoch_ms'] = ut.to_value('unix') * 1000
     df = df.astype({'epoch_ms': 'int64'})
