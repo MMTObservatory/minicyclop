@@ -50,20 +50,19 @@ def main():
         redis_server = redis.StrictRedis(host=redis_host, port=redis_port, db=0)
 
     while True:
-        latest_data = read_latest(args.filename)
-        if latest_data['obstime'] > last_time:
-            log.info(f"New data found at {latest_data['obstime_str']}: seeing = {latest_data['seeing']}\"")
-            last_time = latest_data['obstime']
-            latest_data['measurement_timestamp'] = latest_data['obstime_str']
-            for k in ['seeing', 'flux', 'r0', 'measurement_timestamp']:
-                redis_key = f"seeing_monitor_{k}"
-                try:
+        try:
+            latest_data = read_latest(args.filename)
+            if latest_data['obstime'] > last_time:
+                log.info(f"New data found at {latest_data['obstime_str']}: seeing = {latest_data['seeing']}\"")
+                last_time = latest_data['obstime']
+                latest_data['measurement_timestamp'] = latest_data['obstime_str']
+                for k in ['seeing', 'flux', 'r0', 'measurement_timestamp']:
+                    redis_key = f"seeing_monitor_{k}"
                     redis_server.set(redis_key, latest_data[k])
                     redis_server.publish(redis_key, latest_data[k])
-                except Exception as e:
-                    log.warning(f"Failed to set redis {redis_key} to {latest_data[k]}: {e}")
-
-        else:
-            log.debug("Waiting for data...")
+            else:
+                log.debug("Waiting for data...")
+        except Exception as e:
+            log.warning(f"Problem updating seeing values in redis: {e}")
 
         time.sleep(1)
